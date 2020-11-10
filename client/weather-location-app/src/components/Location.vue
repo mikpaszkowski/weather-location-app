@@ -44,13 +44,11 @@ export default {
           .then((position) => {
             this.coordinates.long = position.coords.longitude;
             this.coordinates.lat = position.coords.latitude;
-            console.log("if : " + this.coordinates.lat + " " + this.coordinates.long);
             return axios.get(`https://geocode.xyz/${this.coordinates.lat},${this.coordinates.long}?geoit=json`);
           })
           .then((response) => {
             this.location.city = response.data.city;
             this.location.country = response.data.country;
-            console.log(response);
             return axios.get(`https://restcountries.eu/rest/v2/name/${this.location.country}`);
           })
           .then(response => {
