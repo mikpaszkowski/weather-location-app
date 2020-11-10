@@ -10,7 +10,12 @@
     <p v-show="location.city">
       {{ "You are in " + location.country + ", " + location.city }}
     </p>
-    <img v-if="location.flag" v-bind:src="location.flag" alt="Flag" id="country-flag">
+    <img
+      v-if="location.flag"
+      v-bind:src="location.flag"
+      alt="Flag"
+      id="country-flag"
+    />
   </div>
 </template>
 
@@ -34,27 +39,29 @@ export default {
   methods: {
     getMyPosition: function () {
       return new Promise((resolve, reject) => {
+        //this function is offloaded its work to the background to the browser's web API
         navigator.geolocation.getCurrentPosition(resolve, reject);
       });
     },
-    showMyCoordinates: function () {
-      //this function is offloaded its work to the background to the browser's web API
+    showMyCoordinates: async function () {
+      
       if (navigator.geolocation) {
-        this.getMyPosition()
-          .then((position) => {
-            this.coordinates.long = position.coords.longitude;
-            this.coordinates.lat = position.coords.latitude;
-            return axios.get(`https://geocode.xyz/${this.coordinates.lat},${this.coordinates.long}?geoit=json`);
-          })
-          .then((response) => {
-            this.location.city = response.data.city;
-            this.location.country = response.data.country;
-            return axios.get(`https://restcountries.eu/rest/v2/name/${this.location.country}`);
-          })
-          .then(response => {
-            this.location.flag = response.data[0].flag;
-          })
-          .catch((err) => console.log(err));
+        try {
+          const positionRes = await this.getMyPosition();
+          this.coordinates.long = positionRes.coords.longitude;
+          this.coordinates.lat = positionRes.coords.latitude;
+
+          const geolocationRes = await axios.get(
+            `https://geocode.xyz/${this.coordinates.lat},${this.coordinates.long}?geoit=json`);
+          this.location.city = geolocationRes.data.city;
+          this.location.country = geolocationRes.data.country;
+
+          const countryRes = await axios.get(
+            `https://restcountries.eu/rest/v2/name/${this.location.country}`);
+          this.location.flag = countryRes.data[0].flag;
+        }catch(e){
+          console.log(e.message);
+        }
       } else {
         console.log("Geolocation API failure.");
       }
