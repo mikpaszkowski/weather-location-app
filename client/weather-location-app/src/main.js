@@ -4,4 +4,12 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 
-createApp(App).use(store).use(router).mount('#app')
+const app = createApp(App)
+
+app.config.ignoredElements = [/^ion-/]
+
+app.use(store)
+app.use(router)
+
+
+app.mount('#app')

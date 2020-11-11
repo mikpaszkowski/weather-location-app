@@ -1,23 +1,17 @@
 
 <template>
     <div>
-        <location-a></location-a>
+      <router-link to="/">Home</router-link>
+      <router-link to="/quotes">All quotes</router-link>
     </div>
+  <router-view />
 </template>
 
 
 <script>
-import Location from './components/Location';
+
 
 export default {
-  components: {
-    'location-a': Location,
-  },
-    data() {
-      return {
-        
-      }
-    },
 }
 </script>
 
