@@ -44,7 +44,6 @@ export default {
       });
     },
     showMyCoordinates: async function () {
-      
       if (navigator.geolocation) {
         try {
           const positionRes = await this.getMyPosition();
@@ -52,14 +51,17 @@ export default {
           this.coordinates.lat = positionRes.coords.latitude;
 
           const geolocationRes = await axios.get(
-            `https://geocode.xyz/${this.coordinates.lat},${this.coordinates.long}?geoit=json`);
+            `https://geocode.xyz/${this.coordinates.lat},${this.coordinates.long}?geoit=json`
+          );
           this.location.city = geolocationRes.data.city;
           this.location.country = geolocationRes.data.country;
 
           const countryRes = await axios.get(
-            `https://restcountries.eu/rest/v2/name/${this.location.country}`);
-          this.location.flag = countryRes.data[0].flag;
-        }catch(e){
+            `https://restcountries.eu/rest/v2/name/${geolocationRes.data.prov}`
+          );
+          console.log(countryRes);
+          this.location.flag = countryRes.data[7].flag;
+        } catch (e) {
           console.log(e.message);
         }
       } else {
